@@ -6,12 +6,12 @@ from unittest.mock import patch
 
 from psycopg2 import OperationalError as Psycopg2Error
 
-from django.core.managment import call_command
+from django.core.management import call_command  # Fixed typo here
 from django.db.utils import OperationalError
 from django.test import SimpleTestCase
 
 
-@patch('core.managment.commands.wait_for_db.Command.check')
+@patch('core.management.commands.wait_for_db.Command.check')
 class CommandTests(SimpleTestCase):
     """Test commands"""
 
@@ -29,11 +29,13 @@ class CommandTests(SimpleTestCase):
         patched_check.side_effect = [Psycopg2Error] * 2 + \
             [OperationalError] * 3 + [True]
 
-            # On mocke l'erreur Psycopg2Error 2 fois,
-            #  puis l'erreur OperationalError 3 fois,
-            #  et enfin True 1 fois. 
-            # Cela simule une situation où la base de données est en train de se lancer, mais pas encore prête.
-            # Après 5 secondes, la base de données devrait être prête, et la commande wait_for_db devrait se terminer avec succès.
+        """ On mocke l'erreur Psycopg2Error 2 fois,
+              puis l'erreur OperationalError 3 fois,
+              et enfin True 1 fois.
+             Cela simule une situation où la base de données est en train de
+             se lancer, mais pas encore prête.
+             Après 5 secondes, la base de données devrait être prête, et la
+             commande wait_for_db devrait se terminer avec succès."""
 
         call_command('wait_for_db')
 
